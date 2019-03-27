@@ -197,7 +197,7 @@ node {
     } finally {
         // Success or failure, always send notifications
         notifyBuild(currentBuild.result)
-
+	// Always attempt to terminate instances if EC2_TERMINATE_INSTANCES is true
 	if (EC2_TERMINATE_INSTANCES) {
 		withCredentials([
 			string(credentialsId: "$EC2_ACCESS_KEY_ID", variable: 'AWS_ACCESS_KEY_ID'),
@@ -205,16 +205,6 @@ node {
 			]) 
 			{
                        	withEnv(['PATH+EXTRA=~/bin']) {
-
-			dir('mig-ci') {
-				ansiColor('xterm') {
-					ansiblePlaybook(
-						playbook: 'destroy_ocp4_cluster.yml',
-						hostKeyChecking: false,
-						unbuffered: true,
-						colorized: true)
-                                }
-			}
 
 			dir('origin3-dev') {
 				ansiColor('xterm') {
@@ -226,7 +216,15 @@ node {
 						colorized: true)
                         	}
 			}
-
+			dir('mig-ci') {
+				ansiColor('xterm') {
+					ansiblePlaybook(
+						playbook: 'destroy_ocp4_cluster.yml',
+						hostKeyChecking: false,
+						unbuffered: true,
+						colorized: true)
+                                }
+			}
                         }
                     }
 	}
