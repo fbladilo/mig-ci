@@ -36,3 +36,8 @@
 
 - name: Create nfs pv's
   shell: "oc create -f /tmp/pv.yml"
+
+- name: Set origin pod dir selinux context to match prod installs (restic fix)
+  shell: "chcon -R -t container_file_t /tmp/openshift.local.clusterup/openshift.local.volumes/pods/"
+  become: true
+  ignore_errors: yes
