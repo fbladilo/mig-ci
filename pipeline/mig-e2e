@@ -40,6 +40,7 @@ node {
             checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'origin3-dev']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/fusor/origin3-dev.git']]])
             
             // Prepare EC2 key for ansible consumption
+            sh "sleep 20"
             KEYS_DIR = "${env.WORKSPACE}" + '/keys'
             sh "mkdir -p ${KEYS_DIR}"
             
@@ -207,6 +208,7 @@ node {
                     }
                 }
             }
+        sh "sleep 45"
         }
 
         stage('Run mig-e2e tests') {
@@ -224,6 +226,9 @@ node {
                     }
                 }
             }
+
+	    // Allow backups to settle before attempt to restore
+            sh "sleep 90"
             
             // Create restore on OCP4
             withEnv(['PATH+EXTRA=~/bin', "KUBECONFIG=${KUBECONFIG_OCP4}"]) {
