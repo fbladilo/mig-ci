@@ -35,8 +35,6 @@ node {
     try {
         notifyBuild('STARTED')   
         stage('Prepare Build Environment') {
-
-            sh 'printenv'
             
             echo 'Cloning origin3-dev repo'
             checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'origin3-dev']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/fusor/origin3-dev.git']]])
@@ -95,7 +93,7 @@ node {
             checkout([$class: 'GitSCM', branches: [[name: "*/$MIG_E2E_BRANCH"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'mig-e2e']], submoduleCfg: [], userRemoteConfigs: [[url: "$MIG_E2E_REPO"]]])
 
             echo 'Cloning ocp-mig-test-data repo'
-            checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'ocp-mig-test-data']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/fusor/ocp-mig-test-data.git']]])
+            checkout([$class: 'GitSCM', branches: [[name: '*/mig_e2e_nginx_demo']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'ocp-mig-test-data']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/fbladilo/ocp-mig-test-data.git']]])
 
         }
     
@@ -129,19 +127,6 @@ node {
             }
         }
 
-	stage('Configure NFS storage on OCP3') {
-		dir('mig-ci') {
-                        ansiColor('xterm') {
-                            ansiblePlaybook(
-                                playbook: 'setup_nfs_storage.yml',
-                                extras: "-e ec2_private_key_file=$KEYS_DIR/$EC2_PRIVATE_KEY_FILE",
-                                hostKeyChecking: false,
-                                unbuffered: true,
-                                colorized: true)
-			}
-		}
-	}
-	
         stage('Deploy Velero and configure S3 storage on OCP3') {
             withCredentials([
                 string(credentialsId: "$EC2_ACCESS_KEY_ID", variable: 'AWS_ACCESS_KEY_ID'),
@@ -224,20 +209,15 @@ node {
             }
         }
 
-        stage('Run OCP4 sanity checks') {
-            // TODO
-        }
-
         stage('Run mig-e2e tests') {
 
-        // placeholder for mig-e2e playbooks
-            // Create msql-pvc with backup on OCP3
+            // Create backups on OCP3
             withEnv(['PATH+EXTRA=~/bin', "KUBECONFIG=${KUBECONFIG_OCP3}"]) {
                 dir('ocp-mig-test-data') {
                     ansiColor('xterm') {
                         ansiblePlaybook(
-                            playbook: 'mysql-pvc.yml',
-                            extras: "-e with_backup=true -e with_restore=false -e with_data=false -e with_resources=true",
+                            playbook: 'nginx.yml',
+                            extras: "-e with_backup=true -e with_restore=false -e with_resources=true",
                             hostKeyChecking: false,
                             unbuffered: true,
                             colorized: true)
@@ -245,13 +225,13 @@ node {
                 }
             }
             
-            // Restore on OCP4
+            // Create restore on OCP4
             withEnv(['PATH+EXTRA=~/bin', "KUBECONFIG=${KUBECONFIG_OCP4}"]) {
                 dir('ocp-mig-test-data') {
                     ansiColor('xterm') {
                         ansiblePlaybook(
-                            playbook: 'mysql-pvc.yml',
-                            extras: "-e with_backup=false -e with_restore=true -e with_data=false -e with_resources=false",
+                            playbook: 'nginx.yml',
+                            extras: "-e with_backup=false -e with_restore=true -e with_resources=false -e delete_velero_restore=false",
                             hostKeyChecking: false,
                             unbuffered: true,
                             colorized: true)
