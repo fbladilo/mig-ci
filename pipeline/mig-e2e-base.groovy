@@ -50,12 +50,12 @@ node {
             utils.prepare_workspace("${env.OCP3_VERSION}", "${env.OCP4_VERSION}")
             utils.clone_mig_e2e()
             utils.clone_mig_controller()
-            common_stages.login_both_clusters("${env.OCP3_CLUSTER_URL}", "${env.OCP4_CLUSTER_URL}", SOURCE_KUBECONFIG, TARGET_KUBECONFIG).call()
+        }
+//        common_stages.login_both_clusters("${env.OCP3_CLUSTER_URL}", "${env.OCP4_CLUSTER_URL}", SOURCE_KUBECONFIG, TARGET_KUBECONFIG).call()
 
 //        common_stages.deploy_mig_controller_on_both(SOURCE_KUBECONFIG, TARGET_KUBECONFIG, false, true).call()
 
 //        common_stages.execute_migration(E2E_TESTS, SOURCE_KUBECONFIG, TARGET_KUBECONFIG).call()
-        }
 
     } catch (Exception ex) {
         currentBuild.result = "FAILED"
