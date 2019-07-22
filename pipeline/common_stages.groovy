@@ -306,6 +306,35 @@ def sanity_checks(kubeconfig) {
   }
 }
 
+def login_cluster(
+  cluster_url,
+  cluster_user,
+  cluster_password,
+  kubeconfig) {
+
+  return {
+    stage('Login to cluster') {
+      steps_finished << 'Login to cluster'
+      def ocp_login_vars = [
+      "console_addr": "${cluster_url}",
+      "user": "${cluster_user}",
+      "passwd": "${cluster_password}",
+      "kubeconfig": "${kubeconfig}"
+      ]
+     sh 'rm -f ocp_login_vars.yml'
+     writeYaml file: 'ocp_login_vars.yml', data: ocp_login_vars
+     ocp_login_vars = ocp_login_vars.collect { e -> '-e ' + e.key + '=' + e.value }
+     ansiColor('xterm') {
+       ansiblePlaybook(
+         playbook: 'login.yml',
+         extras: "${ocp_login_vars.join(' ')}",
+         hostKeyChecking: false,
+         unbuffered: true,
+         colorized: true)
+        }
+    }
+  }
+}
 
 def login_both_clusters(
   source_url,
