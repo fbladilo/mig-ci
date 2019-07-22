@@ -39,7 +39,7 @@ node {
     ws("${WORKSPACE}-${BUILD_NUMBER}") {
     try {
         checkout scm
-//        common_stages = load "${env.WORKSPACE}/pipeline/common_stages.groovy"
+        common_stages = load "${env.WORKSPACE}/pipeline/common_stages.groovy"
         utils = load "${env.WORKSPACE}/pipeline/utils.groovy"
 
         utils.notifyBuild('STARTED')

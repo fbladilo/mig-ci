@@ -307,7 +307,6 @@ def sanity_checks(kubeconfig) {
 }
 
 
-
 def login_both_clusters(
   source_url,
   target_url,
@@ -318,7 +317,7 @@ return {
   stage('Login to source and destination clusters') {
     steps_finished << 'Login to source and destination clusters'
     withCredentials([
-          [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP3_CREDENTIALS}", usernameVariable: 'OCP3_ADMIN_USER', passwordVariable: 'OCP3_ADMIN_PASSWD']
+          [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP3_CREDENTIALS}", usernameVariable: 'OCP3_ADMIN_USER', passwordVariable: 'OCP3_ADMIN_PASSWD'],
           [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP4_CREDENTIALS}", usernameVariable: 'OCP4_ADMIN_USER', passwordVariable: 'OCP4_ADMIN_PASSWD']
           ])
       {
