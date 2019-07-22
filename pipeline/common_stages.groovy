@@ -307,6 +307,66 @@ def sanity_checks(kubeconfig) {
 }
 
 
+
+def login_both_clusters(
+  source_url,
+  target_url,
+  source_kubeconfig,
+  target_kubeconfig) {
+
+return {
+  stage('Login to source and destination clusters') {
+    steps_finished << 'Login to source and destination clusters'
+    withCredentials([
+          [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP3_CREDENTIALS}", usernameVariable: 'OCP3_ADMIN_USER', passwordVariable: 'OCP3_ADMIN_PASSWD']
+          [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP4_CREDENTIALS}", usernameVariable: 'OCP4_ADMIN_USER', passwordVariable: 'OCP4_ADMIN_PASSWD']
+          ])
+      {
+
+        // Source (OCP3)
+        def ocp3_login_vars = [
+        "console_addr": "${source_url}",
+        "user": "${OCP3_ADMIN_USER}",
+        "passwd": "${OCP3_ADMIN_PASSWD}",
+        "kubeconfig": "${source_kubeconfig}"
+        ]
+        sh 'rm -f ocp3_login_vars.yml'
+        writeYaml file: 'ocp3_login_vars.yml', data: ocp3_login_vars
+
+        ocp3_login_vars = ocp3_login_vars.collect { e -> '-e ' + e.key + '=' + e.value }
+        ansiColor('xterm') {
+          ansiblePlaybook(
+            playbook: 'login.yml',
+            extras: "${ocp3_login_vars.join(' ')}",
+            hostKeyChecking: false,
+            unbuffered: true,
+            colorized: true)
+        }
+
+        // Destination (OCP4)
+        def ocp4_login_vars = [
+        "console_addr": "${target_url}",
+        "user": "${OCP4_ADMIN_USER}",
+        "passwd": "${OCP4_ADMIN_PASSWD}", 
+        "kubeconfig": "${target_kubeconfig}"
+        ]
+        sh 'rm -f ocp4_login_vars.yml'
+        writeYaml file: 'ocp4_login_vars.yml', data: ocp4_login_vars
+
+        ocp3_login_vars = ocp4_login_vars.collect { e -> '-e ' + e.key + '=' + e.value }
+        ansiColor('xterm') {
+          ansiblePlaybook(
+            playbook: 'login.yml',
+            extras: "${ocp4_login_vars.join(' ')}",
+            hostKeyChecking: false,
+            unbuffered: true,
+            colorized: true)
+        }
+      }
+    }
+  }
+}
+
 def deploy_mig_controller_on_both(
   source_kubeconfig,
   target_kubeconfig,

@@ -45,6 +45,10 @@ def clone_related_repos() {
   checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'ocp-mig-test-data']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/fusor/ocp-mig-test-data.git']]])
 }
 
+def clone_mig_e2e() {
+  echo 'Cloning mig-e2e repo'
+  checkout([$class: 'GitSCM', branches: [[name: "${MIG_E2E_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'mig-e2e']], submoduleCfg: [], userRemoteConfigs: [[url: "${MIG_E2E_REPO}"]]])
+}
 
 def prepare_cpma(repo = '', branch = '') {
   if (repo == '') {
