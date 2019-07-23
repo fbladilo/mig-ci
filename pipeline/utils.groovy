@@ -261,7 +261,7 @@ def teardown_nfs(prefix = '') {
 }
 
 def teardown_mig_controller(kubeconfig) {
-  withEnv([ "KUBECONFIG=${kubeconfig}" )] {
+  withEnv([ "KUBECONFIG=${kubeconfig}" ]) {
     ansiColor('xterm') {
       ansiblePlaybook(
         playbook: 'mig_controller_destroy.yml',
