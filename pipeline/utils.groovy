@@ -260,7 +260,19 @@ def teardown_nfs(prefix = '') {
   }
 }
 
-def teardown_mig_controller() {
+def teardown_mig_controller(kubeconfig) {
+  withEnv([ "KUBECONFIG=${kubeconfig}" )] {
+    ansiColor('xterm') {
+      ansiblePlaybook(
+        playbook: 'mig_controller_destroy.yml',
+        hostKeyChecking: false,
+        unbuffered: true,
+        colorized: true)
+    }
+  }
+}
+
+def teardown_container_image() {
   // Check if is not upstream
   if (env.QUAYIO_CI_REPO && "${MIG_CONTROLLER_REPO}" != "https://github.com/fusor/mig-controller.git") {
     ansiColor('xterm') {

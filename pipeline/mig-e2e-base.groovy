@@ -56,15 +56,16 @@ node {
           [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP3_CREDENTIALS}", usernameVariable: 'OCP3_ADMIN_USER', passwordVariable: 'OCP3_ADMIN_PASSWD'],
           [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP4_CREDENTIALS}", usernameVariable: 'OCP4_ADMIN_USER', passwordVariable: 'OCP4_ADMIN_PASSWD']
           ]) {
-            common_stages.login_cluster("${env.OCP3_CLUSTER_URL}", "${env.OCP3_ADMIN_USER}", "${env.OCP3_ADMIN_PASSWD}", SOURCE_KUBECONFIG).call()
-            common_stages.login_cluster("${env.OCP4_CLUSTER_URL}", "${env.OCP4_ADMIN_USER}", "${env.OCP4_ADMIN_PASSWD}", SOURCE_KUBECONFIG).call()
+              common_stages.login_cluster("${env.OCP3_CLUSTER_URL}", "${env.OCP3_ADMIN_USER}", "${env.OCP3_ADMIN_PASSWD}", SOURCE_KUBECONFIG).call()
+              common_stages.login_cluster("${env.OCP4_CLUSTER_URL}", "${env.OCP4_ADMIN_USER}", "${env.OCP4_ADMIN_PASSWD}", SOURCE_KUBECONFIG).call()
              }
+        // Always ensure mig controller environment is clean before deployment
+        utils.teardown_mig_controller(SOURCE_KUBECONFIG)
+        utils.teardown_mig_controller(TARGET_KUBECONFIG)
 
-//        common_stages.login_both_clusters("${env.OCP3_CLUSTER_URL}", "${env.OCP4_CLUSTER_URL}", SOURCE_KUBECONFIG, TARGET_KUBECONFIG).call()
-
-//        common_stages.deploy_mig_controller_on_both(SOURCE_KUBECONFIG, TARGET_KUBECONFIG, false, true).call()
-
-//        common_stages.execute_migration(E2E_TESTS, SOURCE_KUBECONFIG, TARGET_KUBECONFIG).call()
+        // Deploy mig controller and begin tests
+        common_stages.deploy_mig_controller_on_both(SOURCE_KUBECONFIG, TARGET_KUBECONFIG, false, true).call()
+        common_stages.execute_migration(E2E_TESTS, SOURCE_KUBECONFIG, TARGET_KUBECONFIG).call()
 
     } catch (Exception ex) {
         currentBuild.result = "FAILED"
@@ -74,8 +75,9 @@ node {
         utils.notifyBuild(currentBuild.result)
         stage('Clean Up Environment') {
           if (CLEAN_WORKSPACE) {
-//              utils.teardown_mig_controller()
               cleanWs cleanWhenFailure: false, notFailBuild: true
+              utils.teardown_mig_controller(SOURCE_KUBECONFIG)
+              utils.teardown_mig_controller(TARGET_KUBECONFIG)
           }
         }
       }
