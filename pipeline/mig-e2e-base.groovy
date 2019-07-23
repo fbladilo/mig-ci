@@ -57,6 +57,7 @@ node {
           [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP4_CREDENTIALS}", usernameVariable: 'OCP4_ADMIN_USER', passwordVariable: 'OCP4_ADMIN_PASSWD']
           ]) {
             common_stages.login_cluster("${env.OCP3_CLUSTER_URL}", "${env.OCP3_ADMIN_USER}", "${env.OCP3_ADMIN_PASSWD}", SOURCE_KUBECONFIG).call()
+            common_stages.login_cluster("${env.OCP4_CLUSTER_URL}", "${env.OCP4_ADMIN_USER}", "${env.OCP4_ADMIN_PASSWD}", SOURCE_KUBECONFIG).call()
              }
 
 //        common_stages.login_both_clusters("${env.OCP3_CLUSTER_URL}", "${env.OCP4_CLUSTER_URL}", SOURCE_KUBECONFIG, TARGET_KUBECONFIG).call()
