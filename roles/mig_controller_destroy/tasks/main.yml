@@ -15,4 +15,3 @@
     name: "{{ item }}"
     wait: yes
   with_items: "{{ velero_crds }}"
-  ignore_errors: true
