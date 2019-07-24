@@ -76,8 +76,6 @@ node {
         stage('Clean Up Environment') {
           if (CLEAN_WORKSPACE) {
               cleanWs cleanWhenFailure: false, notFailBuild: true
-              utils.teardown_mig_controller(SOURCE_KUBECONFIG)
-              utils.teardown_mig_controller(TARGET_KUBECONFIG)
           }
         }
       }
