@@ -310,11 +310,12 @@ def login_cluster(
   cluster_url,
   cluster_user,
   cluster_password,
+  cluster_version,
   kubeconfig) {
 
   return {
-    stage("Login to cluster at ${cluster_url}") {
-      steps_finished << 'Login to cluster at ' + cluster_url
+    stage("Login to OCP ${cluster_version}") {
+      steps_finished << 'Login to OCP ' + cluster_version
       def ocp_login_vars = [
       "console_addr": "${cluster_url}",
       "user": "${cluster_user}",

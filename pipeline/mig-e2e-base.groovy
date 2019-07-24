@@ -56,8 +56,8 @@ node {
           [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP3_CREDENTIALS}", usernameVariable: 'OCP3_ADMIN_USER', passwordVariable: 'OCP3_ADMIN_PASSWD'],
           [$class: 'UsernamePasswordMultiBinding', credentialsId: "${OCP4_CREDENTIALS}", usernameVariable: 'OCP4_ADMIN_USER', passwordVariable: 'OCP4_ADMIN_PASSWD']
           ]) {
-              common_stages.login_cluster("${env.OCP3_CLUSTER_URL}", "${env.OCP3_ADMIN_USER}", "${env.OCP3_ADMIN_PASSWD}", SOURCE_KUBECONFIG).call()
-              common_stages.login_cluster("${env.OCP4_CLUSTER_URL}", "${env.OCP4_ADMIN_USER}", "${env.OCP4_ADMIN_PASSWD}", TARGET_KUBECONFIG).call()
+              common_stages.login_cluster("${env.OCP3_CLUSTER_URL}", "${env.OCP3_ADMIN_USER}", "${env.OCP3_ADMIN_PASSWD}", "${env.OCP3_VERSION}", SOURCE_KUBECONFIG).call()
+              common_stages.login_cluster("${env.OCP4_CLUSTER_URL}", "${env.OCP4_ADMIN_USER}", "${env.OCP4_ADMIN_PASSWD}", "${env.OCP4_VERSION}", TARGET_KUBECONFIG).call()
              }
         // Always ensure mig controller environment is clean before deployment
         utils.teardown_mig_controller(SOURCE_KUBECONFIG)
