@@ -314,7 +314,7 @@ def login_cluster(
 
   return {
     stage('Login to cluster at ${cluster_url}') {
-      steps_finished << 'Login to cluster at ' + ${cluster_url}
+      steps_finished << 'Login to cluster at ' + cluster_url
       def ocp_login_vars = [
       "console_addr": "${cluster_url}",
       "user": "${cluster_user}",
