@@ -126,6 +126,7 @@ def deploy_ocp3_agnosticd(kubeconfig) {
             'admin_user': "${cluster_adm_user}",
             // Fix for commit # 8780932 to work
             'course_name': 'ocp-workshop',
+            'openshift_disable_check': 'disk_availability,memory_availability,docker_image_availability',
             'platform': 'aws'
           ]
           sh 'rm -f vars.yml'
