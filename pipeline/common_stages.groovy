@@ -182,7 +182,7 @@ def deploy_ocp3_agnosticd(kubeconfig, cluster_version) {
             'master_instance_type': "${OCP3_MASTER_INSTANCE_TYPE}",
             'infranode_instance_type': "${OCP3_INFRA_INSTANCE_TYPE}",
             'node_instance_type': "${OCP3_WORKER_INSTANCE_TYPE}",
-            'support_instance_type': "m4.large",
+            'support_instance_type': "${OCP3_SUPPORT_INSTANCE_TYPE}",
             'node_instance_count': "${OCP3_WORKER_INSTANCE_COUNT}",
             'master_instance_count': "${OCP3_MASTER_INSTANCE_COUNT}",
             'infranode_instance_count': "${OCP3_INFRA_INSTANCE_COUNT}",
