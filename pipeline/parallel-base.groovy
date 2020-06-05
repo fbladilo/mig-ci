@@ -146,6 +146,7 @@ node {
         if (USE_DISCONNECTED) {
             common_stages.cam_disconnected(SOURCE_KUBECONFIG, SRC_DISCONNECTED_CONFIG, SRC_CLUSTER_VERSION, false).call()
             common_stages.cam_disconnected(TARGET_KUBECONFIG, DEST_DISCONNECTED_CONFIG, DEST_CLUSTER_VERSION, true).call()
+            sleep 300
         }
         if (DEPLOY_CAM) {
             // deploy mig-operator and mig-controller on source
