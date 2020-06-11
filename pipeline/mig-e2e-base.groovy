@@ -117,7 +117,7 @@ node {
           // Always attempt to remove s3 buckets
           utils.teardown_s3_bucket()
           // Ensure e2e test namespaces are removed on destination
-          utils.teardown_e2e(TARGET_KUBECONFIG)
+          // utils.teardown_e2e(TARGET_KUBECONFIG)
           if (CLEAN_WORKSPACE) {
               cleanWs notFailBuild: true
           }
