@@ -208,6 +208,11 @@ for ns in ${E2E_NS}; do
 		echo "====== $ns pvc ======"
 		echo
 		${OC_BINARY} -n ${ns} get pvc
+                echo
+                echo "====== print events on $ns ======"
+                echo
+                ${OC_BINARY} -n ${ns} get events
+                echo
 		echo
 		echo "====== $ns check pods not in running state ======"
 		echo
